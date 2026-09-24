@@ -1,6 +1,6 @@
 package com.devfelipemilhomes.client;
 
-import com.devfelipemilhomes.client.exception.DuplicateCpfException;
+import com.devfelipemilhomes.exception.DuplicateFieldException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,7 +11,7 @@ public class ClientValidator {
 
     public void validate(Client client){
         if (repository.existsByCpf(client.getCpf())){
-            throw new DuplicateCpfException("CPF already registered");
+            throw new DuplicateFieldException("CPF already registered");
         }
     }
 }
