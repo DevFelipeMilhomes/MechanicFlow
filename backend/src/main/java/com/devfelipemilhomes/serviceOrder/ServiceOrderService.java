@@ -14,12 +14,12 @@ public class ServiceOrderService {
     @EmbeddedId
     private ServiceOrderServiceId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_order_id")
     @MapsId("serviceOrderId")
     private ServiceOrder serviceOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id")
     @MapsId("serviceId")
     private Service service;

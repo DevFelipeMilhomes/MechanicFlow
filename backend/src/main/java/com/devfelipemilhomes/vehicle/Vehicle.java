@@ -16,7 +16,7 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "service_order")
+    @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY)
     private List<ServiceOrder> serviceOrders;
 
     private String plate;
