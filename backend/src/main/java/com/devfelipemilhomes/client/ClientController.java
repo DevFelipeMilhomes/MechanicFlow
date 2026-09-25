@@ -58,7 +58,7 @@ public class ClientController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ClientResponseDTO> uptade(@PathVariable("id") Long id, @Valid @RequestBody ClientRequestDTO dto){
+    public ResponseEntity<Void> uptade(@PathVariable("id") Long id, @Valid @RequestBody ClientRequestDTO dto){
 
             ClientResponseDTO response = service.update(id, dto);
             URI location = ServletUriComponentsBuilder

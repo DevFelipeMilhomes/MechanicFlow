@@ -23,9 +23,12 @@ public class ClientService {
 
     public ClientResponseDTO create(ClientRequestDTO dto){
         Client client = new Client();
-
+        String cpf = dto.cpf()
+                .replace(".", "")
+                .replace("-", "")
+                .replace(" ", "");
         client.setName(dto.name());
-        client.setCpf(dto.cpf());
+        client.setCpf(cpf);
         client.setPhone(dto.phone());
         client.setEmail(dto.email());
 
@@ -112,12 +115,17 @@ public class ClientService {
         Client client = repository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException("client not found")
         );
+        String cpf = dto.cpf()
+                .replace(".", "")
+                .replace("-", "")
+                .replace(" ", "");
 
         client.setName(dto.name());
-        client.setCpf(dto.cpf());
+        client.setCpf(cpf);
         client.setPhone(dto.phone());
         client.setEmail(dto.email());
 
+        validator.validate(client);
         repository.save(client);
 
         return new ClientResponseDTO(
