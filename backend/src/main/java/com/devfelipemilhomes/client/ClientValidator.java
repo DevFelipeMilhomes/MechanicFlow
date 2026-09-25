@@ -3,6 +3,8 @@ package com.devfelipemilhomes.client;
 import com.devfelipemilhomes.exception.DuplicateFieldException;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class ClientValidator {
     private final ClientRepository repository;
@@ -11,7 +13,10 @@ public class ClientValidator {
 
     public void validate(Client client){
         if (repository.existsByCpf(client.getCpf())){
-            throw new DuplicateFieldException("CPF already registered");
+            Client clientRepo = repository.findByCpf(client.getCpf());
+            if(!Objects.equals(client.getId(), clientRepo.getId())) {
+                throw new DuplicateFieldException("CPF already registered");
+            }
         }
     }
 }
