@@ -58,7 +58,7 @@ public class ProfessionalService {
         );
     }
 
-    public ProfessionalResponseDTO update(Long id, ProfessionalRequestDTO dto){
+    public void update(Long id, ProfessionalRequestDTO dto){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
         String cpf = dto.cpf()
                 .replace(".", "")
@@ -71,15 +71,6 @@ public class ProfessionalService {
 
         validator.validate(professional);
         repository.save(professional);
-
-        return new ProfessionalResponseDTO(
-                professional.getId(),
-                professional.getName(),
-                professional.getCpf(),
-                professional.getPhone(),
-                professional.getEmail(),
-                professional.getCreatedAt()
-        );
     }
 
     public void delete(Long id){

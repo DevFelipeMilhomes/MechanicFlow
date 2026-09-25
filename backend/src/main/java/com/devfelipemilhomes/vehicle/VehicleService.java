@@ -63,7 +63,7 @@ public class VehicleService {
         repository.delete(vehicle);
     }
 
-    public VehicleResponseDTO update(Long id, VehicleRequestDTO dto){
+    public void update(Long id, VehicleRequestDTO dto){
         Vehicle vehicle = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vehicle not found"));
         String plate = dto.plate()
                 .replace("-", "")
@@ -75,16 +75,8 @@ public class VehicleService {
         vehicle.setProprietor(dto.proprietor());
 
         validator.validate(vehicle);
-
         repository.save(vehicle);
 
-        return new VehicleResponseDTO(
-                vehicle.getId(),
-                vehicle.getPlate(),
-                vehicle.getBrand(),
-                vehicle.getModel(),
-                vehicle.getProprietor()
-        );
     }
 
     public List<VehicleResponseDTO> searchByExample(String plate, String brand, String model, String proprietor){

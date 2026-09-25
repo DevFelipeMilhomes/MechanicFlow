@@ -59,14 +59,7 @@ public class ClientController {
 
     @PutMapping("{id}")
     public ResponseEntity<Void> uptade(@PathVariable("id") Long id, @Valid @RequestBody ClientRequestDTO dto){
-
-            ClientResponseDTO response = service.update(id, dto);
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(response.id())
-                    .toUri();
-            return ResponseEntity.noContent().location(location).build();
-
+            service.update(id, dto);
+            return ResponseEntity.noContent().build();
     }
 }

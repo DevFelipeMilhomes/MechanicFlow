@@ -111,7 +111,7 @@ public class ClientService {
 
     }
 
-    public ClientResponseDTO update(Long id,ClientRequestDTO dto){
+    public void update(Long id,ClientRequestDTO dto){
         Client client = repository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException("client not found")
         );
@@ -127,15 +127,6 @@ public class ClientService {
 
         validator.validate(client);
         repository.save(client);
-
-        return new ClientResponseDTO(
-                client.getId(),
-                client.getName(),
-                client.getCpf(),
-                client.getPhone(),
-                client.getEmail(),
-                client.getCreatedAt()
-        );
     }
 
 }

@@ -45,15 +45,8 @@ public class VehicleController {
 
     @PutMapping("{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody @Valid VehicleRequestDTO dto){
-        VehicleResponseDTO response = service.update(id, dto);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.id())
-                .toUri();
-
-        return ResponseEntity.noContent().location(location).build();
+        service.update(id, dto);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

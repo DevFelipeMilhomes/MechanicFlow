@@ -39,14 +39,8 @@ public class ProfessionalController {
 
     @PutMapping("{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody @Valid ProfessionalRequestDTO dto){
-        ProfessionalResponseDTO response = service.update(id, dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.id())
-                .toUri();
-
-        return ResponseEntity.noContent().location(location).build();
+        service.update(id, dto);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{id}")
