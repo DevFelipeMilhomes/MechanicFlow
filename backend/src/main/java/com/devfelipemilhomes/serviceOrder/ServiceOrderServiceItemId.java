@@ -6,11 +6,11 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class ServiceOrderServiceId implements Serializable {
+public class ServiceOrderServiceItemId implements Serializable {
 
     @Column(name = "service_order_id")
     private Long serviceOrderId;
 
-    @Column(name = "service_id")
-    private Long serviceId;
+    @Column(name = "service_item_id")
+    private Long serviceItemId;
 }
