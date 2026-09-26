@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "service")
+@Table(name = "service_item")
 public class ServiceItem {
 
     @Id
@@ -22,7 +22,7 @@ public class ServiceItem {
     private BigDecimal basePrice;
 
     @Column(name = "created_at",updatable = false)
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     public Long getId() {
         return id;
