@@ -19,7 +19,6 @@ public record ProfessionalRequestDTO(
         @Size(max = 20, message = "Field exceeding 20 characters")
         String phone,
         @Email(message = "Invalid email")
-        @NotBlank(message = "Required field")
         @Size(min = 2, max = 254, message = "The field is outside the 1 to 254 character range.")
         String email
 ) {
