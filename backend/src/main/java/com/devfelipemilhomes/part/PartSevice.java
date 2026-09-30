@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 @Service
 public class PartSevice {
     private final PartRepository repository;
-    private final PartValidation validation;
+    private final PartValidator validation;
 
-    public PartSevice(PartRepository repository, PartValidation validation){
+    public PartSevice(PartRepository repository, PartValidator validation){
         this.repository = repository;
         this.validation = validation;
     }

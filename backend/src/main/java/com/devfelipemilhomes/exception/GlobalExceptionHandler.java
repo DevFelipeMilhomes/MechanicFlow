@@ -1,5 +1,6 @@
 package com.devfelipemilhomes.exception;
 
+import com.devfelipemilhomes.stock.exception.ReservationExceedingQuantityHand;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -41,6 +42,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateFieldException.class)
     public ResponseEntity<ErrorResponseDTO> handlerDuplicateFieldException(DuplicateFieldException e){
+        ErrorResponseDTO error = ErrorResponseDTO.responseConflict(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(ReservationExceedingQuantityHand.class)
+    public ResponseEntity<ErrorResponseDTO> handlerReservationExceedingQuantityHand(ReservationExceedingQuantityHand e){
         ErrorResponseDTO error = ErrorResponseDTO.responseConflict(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);

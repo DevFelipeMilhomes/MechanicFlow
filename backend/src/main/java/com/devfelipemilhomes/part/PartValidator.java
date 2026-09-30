@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class PartValidation {
+public class PartValidator {
     private final PartRepository repository;
 
-    public PartValidation(PartRepository repository){
+    public PartValidator(PartRepository repository){
         this.repository = repository;
     }
 

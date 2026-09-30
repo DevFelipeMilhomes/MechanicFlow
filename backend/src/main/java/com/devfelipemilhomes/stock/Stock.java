@@ -5,10 +5,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "stock")
-@Data
 public class Stock {
 
     @Id
@@ -26,6 +26,57 @@ public class Stock {
     private Integer quantityReserved;
 
     @Column(name = "updated_at")
-    private OffsetDateTime updatedAt;
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Part getPart() {
+        return part;
+    }
+
+    public void setPart(Part part) {
+        this.part = part;
+    }
+
+    public Integer getQuantityOnHand() {
+        return quantityOnHand;
+    }
+
+    public void setQuantityOnHand(Integer quantityOnHand) {
+        this.quantityOnHand = quantityOnHand;
+    }
+
+    public Integer getQuantityReserved() {
+        return quantityReserved;
+    }
+
+    public void setQuantityReserved(Integer quantityReserved) {
+        this.quantityReserved = quantityReserved;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Stock stock = (Stock) o;
+        return Objects.equals(id, stock.id) && Objects.equals(part, stock.part) && Objects.equals(quantityOnHand, stock.quantityOnHand) && Objects.equals(quantityReserved, stock.quantityReserved) && Objects.equals(updatedAt, stock.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, part, quantityOnHand, quantityReserved, updatedAt);
+    }
 }
