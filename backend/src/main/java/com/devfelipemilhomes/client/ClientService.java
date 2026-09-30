@@ -15,49 +15,26 @@ public class ClientService {
 
     private final ClientRepository repository;
     private final ClientValidator validator;
+    private final ClientMapper mapper;
 
-    public ClientService(ClientRepository repository, ClientValidator validator){
+    public ClientService(ClientRepository repository, ClientValidator validator, ClientMapper mapper){
         this.repository = repository;
         this.validator = validator;
+        this.mapper = mapper;
     }
 
     public ClientResponseDTO create(ClientRequestDTO dto){
-        Client client = new Client();
-        String cpf = dto.cpf()
-                .replace(".", "")
-                .replace("-", "")
-                .replace(" ", "");
-        client.setName(dto.name());
-        client.setCpf(cpf);
-        client.setPhone(dto.phone());
-        client.setEmail(dto.email());
-
+        Client client = mapper.toEntity(dto);
         validator.validate(client);
-
         repository.save(client);
-
-        return new ClientResponseDTO(
-                client.getId(),
-                client.getName(),
-                client.getCpf(),
-                client.getPhone(),
-                client.getEmail(),
-                client.getCreatedAt()
-        );
+        return mapper.toResponse(client);
     }
 
     public ClientResponseDTO findById(Long id){
         Client client = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("client not found"));
 
-        return new ClientResponseDTO(
-                client.getId(),
-                client.getName(),
-                client.getCpf(),
-                client.getPhone(),
-                client.getEmail(),
-                client.getCreatedAt()
-        );
+        return mapper.toResponse(client);
     }
 
     public void delete(Long id){
@@ -98,16 +75,7 @@ public class ClientService {
 
         List<Client> clientsList = repository.findAll(clientExample);
 
-        return clientsList.stream().map(
-                c -> new ClientResponseDTO(
-                        c.getId(),
-                        c.getName(),
-                        c.getCpf(),
-                        c.getPhone(),
-                        c.getEmail(),
-                        c.getCreatedAt()
-                )
-        ).collect(Collectors.toList());
+        return clientsList.stream().map(mapper::toResponse).toList();
 
     }
 
@@ -115,16 +83,7 @@ public class ClientService {
         Client client = repository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException("client not found")
         );
-        String cpf = dto.cpf()
-                .replace(".", "")
-                .replace("-", "")
-                .replace(" ", "");
-
-        client.setName(dto.name());
-        client.setCpf(cpf);
-        client.setPhone(dto.phone());
-        client.setEmail(dto.email());
-
+        mapper.toUpdate(dto,client);
         validator.validate(client);
         repository.save(client);
     }

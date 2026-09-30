@@ -14,60 +14,31 @@ import java.util.stream.Collectors;
 public class ProfessionalService {
     private final ProfessionalRepository repository;
     private final ProfessionalValidator validator;
+    private final ProfessionalMapper mapper;
 
-    public ProfessionalService( ProfessionalRepository repository, ProfessionalValidator validator){
+    public ProfessionalService( ProfessionalRepository repository, ProfessionalValidator validator, ProfessionalMapper mapper){
         this.repository = repository;
         this.validator = validator;
+        this.mapper = mapper;
     }
 
     public ProfessionalResponseDTO create(ProfessionalRequestDTO dto){
-        Professional professional = new Professional();
-        String cpf = dto.cpf()
-                        .replace(".", "")
-                        .replace("-", "")
-                        .replace(" ", "");
-        professional.setName(dto.name());
-        professional.setCpf(cpf);
-        professional.setPhone(dto.phone());
-        professional.setEmail(dto.email());
-
+        Professional professional = mapper.toEntity(dto);
         validator.validate(professional);
-
         repository.save(professional);
 
-        return new ProfessionalResponseDTO(
-                professional.getId(),
-                professional.getName(),
-                professional.getCpf(),
-                professional.getPhone(),
-                professional.getEmail(),
-                professional.getCreatedAt()
-        );
+        return mapper.toResponse(professional);
     }
 
     public ProfessionalResponseDTO findById(Long id){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
 
-        return new ProfessionalResponseDTO(
-                professional.getId(),
-                professional.getName(),
-                professional.getCpf(),
-                professional.getPhone(),
-                professional.getEmail(),
-                professional.getCreatedAt()
-        );
+        return mapper.toResponse(professional);
     }
 
     public void update(Long id, ProfessionalRequestDTO dto){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
-        String cpf = dto.cpf()
-                .replace(".", "")
-                .replace("-", "")
-                .replace(" ", "");
-        professional.setName(dto.name());
-        professional.setCpf(cpf);
-        professional.setPhone(dto.phone());
-        professional.setEmail(dto.email());
+        mapper.toUpdate(dto, professional);
 
         validator.validate(professional);
         repository.save(professional);
@@ -110,15 +81,6 @@ public class ProfessionalService {
 
         List<Professional> professionalList = repository.findAll(professionalExample);
 
-        return professionalList.stream().map(
-                p -> new ProfessionalResponseDTO(
-                        p.getId(),
-                        p.getName(),
-                        p.getCpf(),
-                        p.getPhone(),
-                        p.getEmail(),
-                        p.getCreatedAt()
-                )
-        ).collect(Collectors.toList());
+        return professionalList.stream().map(mapper::toResponse).toList();
     }
 }

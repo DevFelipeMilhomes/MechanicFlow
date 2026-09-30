@@ -6,6 +6,7 @@ import com.devfelipemilhomes.stock.dto.StockRequestDTO;
 import com.devfelipemilhomes.stock.dto.StockResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface StockMapper {
@@ -15,4 +16,10 @@ public interface StockMapper {
     StockResponseDTO toResponse(Stock stock);
 
     PartSummaryDTO toPartSummary(Part part);
+
+    @Mapping(target = "part", ignore = true)
+    void toUpdate(
+            StockRequestDTO dto,
+            @MappingTarget Stock stock
+    );
 }

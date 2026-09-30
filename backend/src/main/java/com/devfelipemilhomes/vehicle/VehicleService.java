@@ -14,48 +14,28 @@ import java.util.stream.Collectors;
 public class VehicleService {
     private final VehicleRepository repository;
     private final VehicleValidator validator;
+    private final VehicleMapper mapper;
 
-    public VehicleService(VehicleRepository repository, VehicleValidator validator){
+    public VehicleService(VehicleRepository repository, VehicleValidator validator, VehicleMapper mapper){
         this.repository = repository;
         this.validator = validator;
+        this.mapper = mapper;
     }
 
     public VehicleResponseDTO create(VehicleRequestDTO dto){
-        Vehicle vehicle = new Vehicle();
-        String plate = dto.plate()
-                .replace("-", "")
-                .replace(" ", "")
-                .toUpperCase();
-        vehicle.setPlate(plate);
-        vehicle.setBrand(dto.brand());
-        vehicle.setModel(dto.model());
-        vehicle.setProprietor(dto.proprietor());
+        Vehicle vehicle = mapper.toEntity(dto);
 
         validator.validate(vehicle);
-
         repository.save(vehicle);
 
-        return new VehicleResponseDTO(
-                vehicle.getId(),
-                vehicle.getPlate(),
-                vehicle.getBrand(),
-                vehicle.getModel(),
-                vehicle.getProprietor()
-        );
-
+        return mapper.toResponse(vehicle);
     }
 
     public VehicleResponseDTO findById(Long id){
         Vehicle vehicle = repository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Vehicle not found"));
 
-        return new VehicleResponseDTO(
-                vehicle.getId(),
-                vehicle.getPlate(),
-                vehicle.getBrand(),
-                vehicle.getModel(),
-                vehicle.getProprietor()
-        );
+        return mapper.toResponse(vehicle);
     }
 
     public void delete(Long id){
@@ -65,18 +45,10 @@ public class VehicleService {
 
     public void update(Long id, VehicleRequestDTO dto){
         Vehicle vehicle = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vehicle not found"));
-        String plate = dto.plate()
-                .replace("-", "")
-                .replace(" ", "")
-                .toUpperCase();
-        vehicle.setPlate(plate);
-        vehicle.setBrand(dto.brand());
-        vehicle.setModel(dto.model());
-        vehicle.setProprietor(dto.proprietor());
+        mapper.toUpdate(dto, vehicle);
 
         validator.validate(vehicle);
         repository.save(vehicle);
-
     }
 
     public List<VehicleResponseDTO> searchByExample(String plate, String brand, String model, String proprietor){
@@ -111,14 +83,6 @@ public class VehicleService {
 
         List<Vehicle> vehicleList = repository.findAll(vehicleExample);
 
-        return vehicleList.stream().map(
-                v -> new VehicleResponseDTO(
-                        v.getId(),
-                        v.getPlate(),
-                        v.getBrand(),
-                        v.getModel(),
-                        v.getProprietor()
-                )
-        ).collect(Collectors.toList());
+        return vehicleList.stream().map(mapper::toResponse).toList();
     }
 }

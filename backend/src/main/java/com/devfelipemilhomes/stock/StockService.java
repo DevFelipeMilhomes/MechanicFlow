@@ -43,9 +43,8 @@ public class StockService {
     public void update(Long id, StockRequestDTO dto){
         Stock stock = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Stock not found"));
         Part part = partRepository.findById(dto.partId()).orElseThrow(()->new ResourceNotFoundException("part not found"));
+        mapper.toUpdate(dto, stock);
         stock.setPart(part);
-        stock.setQuantityOnHand(dto.quantityOnHand());
-        stock.setQuantityReserved(dto.quantityReserved());
         stock.setUpdatedAt(OffsetDateTime.now());
         validator.validate(stock);
         repository.save(stock);

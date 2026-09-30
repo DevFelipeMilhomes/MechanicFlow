@@ -15,48 +15,32 @@ import java.util.stream.Collectors;
 public class ServiceItemService {
     private final ServiceItemRepository repository;
     private final ServiceItemValidator validator;
+    private final ServiceItemMapper mapper;
 
-    public ServiceItemService(ServiceItemRepository repository, ServiceItemValidator validator){
+    public ServiceItemService(ServiceItemRepository repository, ServiceItemValidator validator, ServiceItemMapper mapper){
         this.repository = repository;
         this.validator = validator;;
+        this.mapper = mapper;
     }
 
     public ServiceItemResponseDTO create(ServiceItemRequestDTO dto){
-        ServiceItem serviceItem = new ServiceItem();
-        serviceItem.setName(dto.name()
-                .toLowerCase());
-        serviceItem.setDescription(dto.description());
-        serviceItem.setBasePrice(dto.basePrice());
+        ServiceItem serviceItem = mapper.toEntity(dto);
 
         validator.validate(serviceItem);
         repository.save(serviceItem);
 
-        return new ServiceItemResponseDTO(
-                serviceItem.getId(),
-                serviceItem.getName(),
-                serviceItem.getDescription(),
-                serviceItem.getBasePrice(),
-                serviceItem.getCreatedAt()
-        );
+        return mapper.toResponse(serviceItem);
     }
 
     public ServiceItemResponseDTO findById(Long id){
         ServiceItem serviceItem = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service not found"));
-        return new ServiceItemResponseDTO(
-                serviceItem.getId(),
-                serviceItem.getName(),
-                serviceItem.getDescription(),
-                serviceItem.getBasePrice(),
-                serviceItem.getCreatedAt()
-        );
+        return mapper.toResponse(serviceItem);
     }
 
     public void update(Long id, ServiceItemRequestDTO dto){
         ServiceItem serviceItem = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service not found"));
-        serviceItem.setName(dto.name()
-                .toLowerCase());
-        serviceItem.setDescription(dto.description());
-        serviceItem.setBasePrice(dto.basePrice());
+        mapper.toUpdate(dto, serviceItem);
+
         validator.validate(serviceItem);
         repository.save(serviceItem);
     }
@@ -92,14 +76,6 @@ public class ServiceItemService {
 
         List<ServiceItem> serviceItemList = repository.findAll(serviceItemExample);
 
-        return serviceItemList.stream().map(
-                s-> new ServiceItemResponseDTO(
-                        s.getId(),
-                        s.getName(),
-                        s.getDescription(),
-                        s.getBasePrice(),
-                        s.getCreatedAt()
-                )
-        ).collect(Collectors.toList());
+        return serviceItemList.stream().map(mapper::toResponse).toList();
     }
 }

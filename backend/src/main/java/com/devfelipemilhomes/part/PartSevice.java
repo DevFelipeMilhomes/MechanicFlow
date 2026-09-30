@@ -15,52 +15,31 @@ import java.util.stream.Collectors;
 public class PartSevice {
     private final PartRepository repository;
     private final PartValidator validation;
+    private final PartMapper mapper;
 
-    public PartSevice(PartRepository repository, PartValidator validation){
+    public PartSevice(PartRepository repository, PartValidator validation, PartMapper mapper){
         this.repository = repository;
         this.validation = validation;
+        this.mapper = mapper;
     }
 
     public PartResponseDTO create(PartRequestDTO dto){
-        Part part = new Part();
-        part.setName(dto.name()
-                .toLowerCase());
-        part.setDescription(dto.description());
-        part.setUnitPrice(dto.unitPrice());
-
+        Part part = mapper.toEntity(dto);
         validation.validate(part);
         repository.save(part);
-
-        return new PartResponseDTO(
-                part.getId(),
-                part.getName(),
-                part.getDescription(),
-                part.getUnitPrice(),
-                part.getCreatedAt()
-        );
+        return mapper.toResponse(part);
     }
 
     public PartResponseDTO findById(Long id){
         Part part = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
-        return new PartResponseDTO(
-                part.getId(),
-                part.getName(),
-                part.getDescription(),
-                part.getUnitPrice(),
-                part.getCreatedAt()
-        );
+        return mapper.toResponse(part);
     }
 
     public void update(Long id, PartRequestDTO dto){
         Part part = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
-        part.setName(dto.name()
-                .toLowerCase());
-        part.setDescription(dto.description());
-        part.setUnitPrice(dto.unitPrice());
-
+        mapper.toUpdate(dto, part);
         validation.validate(part);
         repository.save(part);
-
     }
 
     public void delete(Long id){
@@ -95,14 +74,6 @@ public class PartSevice {
 
         List<Part> partList = repository.findAll(partExample);
 
-        return partList.stream().map(
-                p-> new PartResponseDTO(
-                        p.getId(),
-                        p.getName(),
-                        p.getDescription(),
-                        p.getUnitPrice(),
-                        p.getCreatedAt()
-                )
-        ).collect(Collectors.toList());
+        return partList.stream().map(mapper::toResponse).toList();
     }
 }
