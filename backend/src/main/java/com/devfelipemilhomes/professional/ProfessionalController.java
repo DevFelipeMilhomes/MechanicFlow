@@ -2,6 +2,7 @@ package com.devfelipemilhomes.professional;
 
 import com.devfelipemilhomes.professional.dto.ProfessionalRequestDTO;
 import com.devfelipemilhomes.professional.dto.ProfessionalResponseDTO;
+import com.devfelipemilhomes.role.dto.RoleAssignRequestDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,5 +59,17 @@ public class ProfessionalController {
     ){
         List<ProfessionalResponseDTO> responseDTOList = service.searchByExample(name, cpf, phone, email);
         return ResponseEntity.ok(responseDTOList);
+    }
+
+    @PostMapping("{id}/roles")
+    public ResponseEntity<Void> assignRole(@PathVariable("id") Long id, @RequestBody @Valid RoleAssignRequestDTO dto){
+        service.assignRole(id, dto);
+        return ResponseEntity.accepted().build();
+    }
+
+    @DeleteMapping("{id}/roles/{roleId}")
+    public ResponseEntity<Void> disassociateRole(@PathVariable("id") Long id, @PathVariable("roleId") Long roleId){
+        service.disassociateRole(id, roleId);
+        return ResponseEntity.noContent().build();
     }
 }

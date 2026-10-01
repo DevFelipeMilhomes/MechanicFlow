@@ -1,9 +1,12 @@
 package com.devfelipemilhomes.role;
 
+import com.devfelipemilhomes.professional.Professional;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "role")
@@ -14,6 +17,9 @@ public class Role {
     private Long id;
 
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<Professional> professionals = new HashSet<>();
 
     private String description;
 

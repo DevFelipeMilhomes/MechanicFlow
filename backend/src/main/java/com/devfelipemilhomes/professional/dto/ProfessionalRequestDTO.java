@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
+
 public record ProfessionalRequestDTO(
         @NotBlank(message = "Required field")
         @Size(min = 2, max = 150, message = "The field is outside the 2 to 150 character range.")
@@ -20,6 +22,8 @@ public record ProfessionalRequestDTO(
         String phone,
         @Email(message = "Invalid email")
         @Size(min = 2, max = 254, message = "The field is outside the 1 to 254 character range.")
-        String email
+        String email,
+        Set<Long> roleIds
+
 ) {
 }

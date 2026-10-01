@@ -1,9 +1,12 @@
 package com.devfelipemilhomes.professional;
 
+import com.devfelipemilhomes.role.Role;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "professional")
@@ -20,6 +23,14 @@ public class Professional {
     private String phone;
 
     private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "professional_role",
+            joinColumns = @JoinColumn(name = "professional_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
@@ -72,15 +83,23 @@ public class Professional {
         this.createdAt = createdAt;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Professional that = (Professional) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cpf, that.cpf) && Objects.equals(phone, that.phone) && Objects.equals(email, that.email) && Objects.equals(createdAt, that.createdAt);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cpf, that.cpf) && Objects.equals(phone, that.phone) && Objects.equals(email, that.email) && Objects.equals(roles, that.roles) && Objects.equals(createdAt, that.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cpf, phone, email, createdAt);
+        return Objects.hash(id, name, cpf, phone, email, roles, createdAt);
     }
 }

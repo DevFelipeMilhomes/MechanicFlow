@@ -1,5 +1,6 @@
 package com.devfelipemilhomes.role;
 
+import com.devfelipemilhomes.role.dto.RoleAssignRequestDTO;
 import com.devfelipemilhomes.role.dto.RoleRequestDTO;
 import com.devfelipemilhomes.role.dto.RoleResponseDTO;
 import jakarta.validation.Valid;
