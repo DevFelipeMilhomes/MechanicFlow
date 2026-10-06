@@ -22,8 +22,18 @@ public class StockValidator {
             }
         }
 
-        if(stock.getQuantityReserved()>stock.getQuantityOnHand()){
-            throw new ReservationExceedingQuantityHand("reservations exceeding the existing quantity");
+        validateQuantityAvailable(stock.getQuantityOnHand(), stock.getQuantityReserved());
+    }
+
+    public void validateQuantityAvailable(Integer quantityOnHand, Integer quantityReserved){
+        if(quantityReserved>quantityOnHand){
+            throw new ReservationExceedingQuantityHand("The reservation cannot exceed the available quantity.");
+        }
+    }
+
+    public void validateReservation(Integer quantityAvailable, Integer quantityReserve){
+        if(quantityReserve>quantityAvailable){
+            throw new ReservationExceedingQuantityHand("The reservation cannot exceed the available quantity.");
         }
     }
 }

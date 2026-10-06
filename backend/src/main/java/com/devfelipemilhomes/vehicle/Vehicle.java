@@ -77,13 +77,16 @@ public class Vehicle {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Vehicle vehicle = (Vehicle) o;
-        return Objects.equals(id, vehicle.id) && Objects.equals(serviceOrders, vehicle.serviceOrders) && Objects.equals(plate, vehicle.plate) && Objects.equals(brand, vehicle.brand) && Objects.equals(model, vehicle.model) && Objects.equals(proprietor, vehicle.proprietor);
+
+        return id != null && id.equals(vehicle.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serviceOrders, plate, brand, model, proprietor);
+        return getClass().hashCode();
     }
 }

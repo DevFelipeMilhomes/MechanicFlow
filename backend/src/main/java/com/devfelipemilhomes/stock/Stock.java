@@ -70,13 +70,16 @@ public class Stock {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Stock stock = (Stock) o;
-        return Objects.equals(id, stock.id) && Objects.equals(part, stock.part) && Objects.equals(quantityOnHand, stock.quantityOnHand) && Objects.equals(quantityReserved, stock.quantityReserved) && Objects.equals(updatedAt, stock.updatedAt);
+
+        return id != null && id.equals(stock.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, part, quantityOnHand, quantityReserved, updatedAt);
+        return getClass().hashCode();
     }
 }

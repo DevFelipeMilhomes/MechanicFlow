@@ -77,13 +77,16 @@ public class Client {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Client client = (Client) o;
-        return Objects.equals(id, client.id) && Objects.equals(name, client.name) && Objects.equals(cpf, client.cpf) && Objects.equals(phone, client.phone) && Objects.equals(email, client.email) && Objects.equals(createdAt, client.createdAt);
+
+        return id != null && id.equals(client.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cpf, phone, email, createdAt);
+        return getClass().hashCode();
     }
 }

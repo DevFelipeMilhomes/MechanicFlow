@@ -18,9 +18,6 @@ public class Role {
 
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<Professional> professionals = new HashSet<>();
-
     private String description;
 
     public Long getId() {
@@ -49,14 +46,16 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
-
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Role role = (Role) o;
-        return Objects.equals(id, role.id) && Objects.equals(name, role.name) && Objects.equals(description, role.description);
+
+        return id != null && id.equals(role.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return getClass().hashCode();
     }
 }

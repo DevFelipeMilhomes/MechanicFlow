@@ -1,4 +1,4 @@
-package com.devfelipemilhomes.serviceOrder;
+package com.devfelipemilhomes.serviceOrder.serviceOrderServiceItem;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

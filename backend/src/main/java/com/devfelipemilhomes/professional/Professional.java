@@ -93,13 +93,16 @@ public class Professional {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Professional that = (Professional) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cpf, that.cpf) && Objects.equals(phone, that.phone) && Objects.equals(email, that.email) && Objects.equals(roles, that.roles) && Objects.equals(createdAt, that.createdAt);
+
+        Professional professional = (Professional) o;
+
+        return id != null && id.equals(professional.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cpf, phone, email, roles, createdAt);
+        return getClass().hashCode();
     }
 }

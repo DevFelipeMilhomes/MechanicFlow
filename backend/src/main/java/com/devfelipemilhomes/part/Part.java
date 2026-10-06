@@ -66,13 +66,16 @@ public class Part {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Part part = (Part) o;
-        return Objects.equals(id, part.id) && Objects.equals(name, part.name) && Objects.equals(description, part.description) && Objects.equals(unitPrice, part.unitPrice) && Objects.equals(createdAt, part.createdAt);
+
+        return id != null && id.equals(part.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, unitPrice, createdAt);
+        return getClass().hashCode();
     }
 }
