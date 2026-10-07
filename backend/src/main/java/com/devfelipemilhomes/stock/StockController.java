@@ -2,6 +2,7 @@ package com.devfelipemilhomes.stock;
 
 import com.devfelipemilhomes.stock.dto.StockRequestDTO;
 import com.devfelipemilhomes.stock.dto.StockResponseDTO;
+import com.devfelipemilhomes.stock.stockMoviment.StockMovimentResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +51,10 @@ public class StockController {
     @GetMapping
     public ResponseEntity<List<StockResponseDTO>> findAll(){
         return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("stock-moviment")
+    public ResponseEntity<List<StockMovimentResponseDTO>> findAllStockMoviment(){
+        return ResponseEntity.ok(service.findAllStockMoviment());
     }
 }

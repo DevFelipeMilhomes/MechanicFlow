@@ -1,10 +1,10 @@
-package com.devfelipemilhomes.stockMoviment;
+package com.devfelipemilhomes.stock.stockMoviment;
 
 import com.devfelipemilhomes.serviceOrder.serviceOrderPart.ServiceOrderPart;
 import com.devfelipemilhomes.stock.Stock;
 import jakarta.persistence.*;
-import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -32,7 +32,13 @@ public class StockMoviment {
     private String description;
 
     @Column(name = "created_at", updatable = false)
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    @Column(name = "part_name", nullable = false)
+    private String partName;
+
+    @Column(name = "unit_price", nullable = false)
+    private BigDecimal unitPrice;
 
     public Long getId() {
         return id;
@@ -88,6 +94,22 @@ public class StockMoviment {
 
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public String getPartName() {
+        return partName;
+    }
+
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
 
     @Override

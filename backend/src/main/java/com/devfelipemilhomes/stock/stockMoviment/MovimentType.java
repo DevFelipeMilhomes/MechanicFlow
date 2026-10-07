@@ -1,4 +1,4 @@
-package com.devfelipemilhomes.stockMoviment;
+package com.devfelipemilhomes.stock.stockMoviment;
 
 public enum MovimentType {
     ENTRY,

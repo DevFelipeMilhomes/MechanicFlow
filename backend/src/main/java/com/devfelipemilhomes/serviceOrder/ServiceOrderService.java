@@ -27,6 +27,7 @@ import com.devfelipemilhomes.stock.exception.ConsumptionExceedingReserves;
 import com.devfelipemilhomes.stock.exception.QuantityReleaseExceedingUnconsumed;
 import com.devfelipemilhomes.vehicle.VehicleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -111,6 +112,7 @@ public class ServiceOrderService {
         repository.delete(serviceOrder);
     }
 
+    @Transactional
     public void addPart(Long id, ServiceOrderPartReserveDTO dto){
         ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
         Part part = partRepository.findById(dto.partId()).orElseThrow(()->new ResourceNotFoundException("Part not found"));
@@ -123,10 +125,11 @@ public class ServiceOrderService {
         serviceOrderPart.setQuantityReserved(dto.quantityReserved());
         serviceOrderPart.setQuantityUsed(0);
         serviceOrderPart.setUnitPrice(part.getUnitPrice());
-        stockService.reserve(dto.quantityReserved(), dto.partId());
         serviceOrderPartRepository.save(serviceOrderPart);
+        stockService.reserve(dto.quantityReserved(), dto.partId(), serviceOrderPart);
     }
 
+    @Transactional
     public void reserveMoreParts(Long id, ServiceOrderPartReserveMoreDTO dto){
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
@@ -135,11 +138,12 @@ public class ServiceOrderService {
                     "Part does not belong to this service order"
             );
         }
-        stockService.reserve(dto.quantityReserved(), serviceOrderPart.getPart().getId());
         serviceOrderPart.setQuantityReserved(serviceOrderPart.getQuantityReserved()+dto.quantityReserved());
         serviceOrderPartRepository.save(serviceOrderPart);
+        stockService.reserve(dto.quantityReserved(), serviceOrderPart.getPart().getId(), serviceOrderPart);
     }
 
+    @Transactional
     public void consumePart(Long id, ServiceOrderPartConsumeDTO dto){
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
@@ -152,11 +156,12 @@ public class ServiceOrderService {
         if(dto.quantityConsume()>unconsumedQuantity){
             throw new ConsumptionExceedingReserves("The amount used cannot exceed the reserved amount.");
         }
-        stockService.consume(dto.quantityConsume(), serviceOrderPart.getPart().getId());
         serviceOrderPart.setQuantityUsed(serviceOrderPart.getQuantityUsed()+dto.quantityConsume());
         serviceOrderPartRepository.save(serviceOrderPart);
+        stockService.consume(dto.quantityConsume(), serviceOrderPart.getPart().getId(), serviceOrderPart);
     }
 
+    @Transactional
     public void releaseToStock(Long id, ServiceOrderPartReleaseDTO dto){
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
@@ -173,21 +178,22 @@ public class ServiceOrderService {
             boolean nothingUsed = serviceOrderPart.getQuantityUsed().equals(0);
 
             if(releaseAll && nothingUsed){
-                stockService.release(dto.quantityRelease(), serviceOrderPart.getPart().getId());
+                stockService.release(dto.quantityRelease(), serviceOrderPart.getPart().getId(), serviceOrderPart);
                 serviceOrderPartRepository.delete(serviceOrderPart);
                 return;
 
             } else if(releaseAll){
-                stockService.release(unconsumedQuantity, serviceOrderPart.getPart().getId());
+                stockService.release(unconsumedQuantity, serviceOrderPart.getPart().getId(), serviceOrderPart);
                 serviceOrderPart.setQuantityReserved(serviceOrderPart.getQuantityUsed());
 
             } else if (dto.quantityRelease().compareTo(unconsumedQuantity)<0){
-                stockService.release(dto.quantityRelease(), serviceOrderPart.getPart().getId());
+                stockService.release(dto.quantityRelease(), serviceOrderPart.getPart().getId(), serviceOrderPart);
                 serviceOrderPart.setQuantityReserved(serviceOrderPart.getQuantityReserved()-dto.quantityRelease());
 
             } else {
                 throw new QuantityReleaseExceedingUnconsumed("The quantity to be released exceeds the unconsumed quantity.");
             }
+
             serviceOrderPartRepository.save(serviceOrderPart);
         }
 

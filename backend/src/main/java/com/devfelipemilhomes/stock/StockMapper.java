@@ -22,4 +22,5 @@ public interface StockMapper {
             StockRequestDTO dto,
             @MappingTarget Stock stock
     );
+
 }

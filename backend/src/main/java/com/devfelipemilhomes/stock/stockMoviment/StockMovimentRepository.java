@@ -1,4 +1,4 @@
-package com.devfelipemilhomes.stockMoviment;
+package com.devfelipemilhomes.stock.stockMoviment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
