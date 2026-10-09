@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers(HttpMethod.DELETE, "/clients/**").hasRole("GERENTE")
+                                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/clients/**").hasRole("GERENTE")
                                 .anyRequest()
                                 .authenticated()
                 )

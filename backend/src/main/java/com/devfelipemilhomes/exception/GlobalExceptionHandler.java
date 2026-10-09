@@ -1,5 +1,6 @@
 package com.devfelipemilhomes.exception;
 
+import com.devfelipemilhomes.appUser.exception.UsernameAlreadyExistsException;
 import com.devfelipemilhomes.serviceOrder.dto.ReservationNotYetReturned;
 import com.devfelipemilhomes.serviceOrder.exception.StatusReturnNotAllowed;
 import com.devfelipemilhomes.stock.exception.ConsumptionExceedingReserves;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +27,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handlerResourceNotFoundException(ResourceNotFoundException e){
+        ErrorResponseDTO error = ErrorResponseDTO.responseNotFound(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handlerUsernameNotFoundException(UsernameNotFoundException e){
         ErrorResponseDTO error = ErrorResponseDTO.responseNotFound(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -115,5 +124,12 @@ public class GlobalExceptionHandler {
         ErrorResponseDTO error = ErrorResponseDTO.responseNotFound("Resource not found");
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDTO> handlderUsernameAlreadyExistsException(UsernameAlreadyExistsException e){
+        ErrorResponseDTO error = ErrorResponseDTO.responseConflict(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
