@@ -5,6 +5,7 @@ import com.devfelipemilhomes.serviceItem.dto.ServiceItemRequestDTO;
 import com.devfelipemilhomes.serviceItem.dto.ServiceItemResponseDTO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ public class ServiceItemService {
         this.mapper = mapper;
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public ServiceItemResponseDTO create(ServiceItemRequestDTO dto){
         ServiceItem serviceItem = mapper.toEntity(dto);
 
@@ -32,11 +34,13 @@ public class ServiceItemService {
         return mapper.toResponse(serviceItem);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public ServiceItemResponseDTO findById(Long id){
         ServiceItem serviceItem = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service not found"));
         return mapper.toResponse(serviceItem);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id, ServiceItemRequestDTO dto){
         ServiceItem serviceItem = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service not found"));
         mapper.toUpdate(dto, serviceItem);
@@ -45,11 +49,13 @@ public class ServiceItemService {
         repository.save(serviceItem);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         ServiceItem serviceItem = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service not found"));
         repository.delete(serviceItem);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public List<ServiceItemResponseDTO> searchByExample(String name, String description, BigDecimal basePrice){
         ServiceItem serviceItem = new ServiceItem();
         serviceItem.setName(name);

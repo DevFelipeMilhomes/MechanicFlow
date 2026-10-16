@@ -5,6 +5,7 @@ import com.devfelipemilhomes.vehicle.dto.VehicleRequestDTO;
 import com.devfelipemilhomes.vehicle.dto.VehicleResponseDTO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class VehicleService {
         this.mapper = mapper;
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public VehicleResponseDTO create(VehicleRequestDTO dto){
         Vehicle vehicle = mapper.toEntity(dto);
 
@@ -31,6 +33,7 @@ public class VehicleService {
         return mapper.toResponse(vehicle);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public VehicleResponseDTO findById(Long id){
         Vehicle vehicle = repository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Vehicle not found"));
@@ -38,11 +41,13 @@ public class VehicleService {
         return mapper.toResponse(vehicle);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         Vehicle vehicle = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Vehicle not found"));
         repository.delete(vehicle);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id, VehicleRequestDTO dto){
         Vehicle vehicle = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vehicle not found"));
         mapper.toUpdate(dto, vehicle);
@@ -51,6 +56,7 @@ public class VehicleService {
         repository.save(vehicle);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public List<VehicleResponseDTO> searchByExample(String plate, String brand, String model, String proprietor){
         Vehicle vehicle = new Vehicle();
         vehicle.setPlate(plate);

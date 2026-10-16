@@ -7,6 +7,7 @@ import com.devfelipemilhomes.role.RoleRepository;
 import com.devfelipemilhomes.role.dto.RoleAssignRequestDTO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -27,6 +28,7 @@ public class ProfessionalService {
         this.roleRepository = roleRepository;
     }
 
+    @PreAuthorize("hasRole('GERENTE'")
     public ProfessionalResponseDTO create(ProfessionalRequestDTO dto){
         Professional professional = mapper.toEntity(dto);
         validator.validate(professional, dto.roleIds());
@@ -35,12 +37,14 @@ public class ProfessionalService {
         return mapper.toResponse(professional);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public ProfessionalResponseDTO findById(Long id){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
 
         return mapper.toResponse(professional);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id, ProfessionalRequestDTO dto){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
         mapper.toUpdate(dto, professional);
@@ -49,23 +53,27 @@ public class ProfessionalService {
         repository.save(professional);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
         repository.delete(professional);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void assignRole(Long id, RoleAssignRequestDTO dto){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
         professional.getRoles().add(roleRepository.findById(dto.roleId()).orElseThrow(()->new ResourceNotFoundException("Role not found")));
         repository.save(professional);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void disassociateRole(Long id, Long roleId){
         Professional professional = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Professional not found"));
         professional.getRoles().remove(roleRepository.findById(roleId).orElseThrow(()->new ResourceNotFoundException("Role not found")));
         repository.save(professional);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public List<ProfessionalResponseDTO> searchByExample(String name, String cpf, String phone, String email){
         Professional professional = new Professional();
         professional.setName(name);

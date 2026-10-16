@@ -3,6 +3,7 @@ package com.devfelipemilhomes.role;
 import com.devfelipemilhomes.exception.ResourceNotFoundException;
 import com.devfelipemilhomes.role.dto.RoleRequestDTO;
 import com.devfelipemilhomes.role.dto.RoleResponseDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +15,13 @@ public class RoleService {
     private final RoleValidator validator;
     private final RoleMapper mapper;
 
+
     public RoleService(RoleRepository repository, RoleValidator validator, RoleMapper mapper){
         this.repository = repository;
         this.validator = validator;
         this.mapper = mapper;
     }
-
+    @PreAuthorize("hasRole('GERENTE')")
     public RoleResponseDTO create(RoleRequestDTO dto){
         Role role = mapper.toEntity(dto);
 
@@ -29,11 +31,13 @@ public class RoleService {
         return mapper.toResponse(role);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public RoleResponseDTO findById(Long id){
         Role role = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Role not found"));
         return mapper.toResponse(role);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public void update(Long id, RoleRequestDTO dto){
         Role role = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Role not found"));
         mapper.toUpdate(dto, role);
@@ -41,10 +45,12 @@ public class RoleService {
         repository.save(role);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public List<RoleResponseDTO> findAll(){
         return repository.findAll().stream().map(mapper::toResponse).toList();
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public void delete(Long id){
         Role role = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Role not found"));
         repository.delete(role);

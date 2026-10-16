@@ -6,6 +6,7 @@ import com.devfelipemilhomes.exception.ResourceNotFoundException;
 import com.devfelipemilhomes.part.Part;
 import com.devfelipemilhomes.part.PartRepository;
 import com.devfelipemilhomes.professional.ProfessionalRepository;
+import com.devfelipemilhomes.security.CustomUserDetails;
 import com.devfelipemilhomes.serviceItem.ServiceItem;
 import com.devfelipemilhomes.serviceItem.ServiceItemRepository;
 import com.devfelipemilhomes.serviceOrder.dto.ReservationNotYetReturned;
@@ -26,6 +27,10 @@ import com.devfelipemilhomes.stock.StockService;
 import com.devfelipemilhomes.stock.exception.ConsumptionExceedingReserves;
 import com.devfelipemilhomes.stock.exception.QuantityReleaseExceedingUnconsumed;
 import com.devfelipemilhomes.vehicle.VehicleRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,24 +74,39 @@ public class ServiceOrderService {
         this.serviceItemRepository = serviceItemRepository;
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     public ServiceOrderResponseDTO create(ServiceOrderRequestDTO dto){
+        Authentication authentication =
+                SecurityContextHolder.getContext()
+                        .getAuthentication();
+
+        assert authentication != null;
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        assert userDetails != null;
+        Long professionalId = userDetails.getProfessionalId();
         ServiceOrder serviceOrder = mapper.toEntity(
                 dto,
                 clientRepository.findById(dto.clientId()).orElseThrow(()->new ResourceNotFoundException("Client not found")),
-                professionalRepository.findById(dto.professionalId()).orElseThrow(()-> new ResourceNotFoundException("Professional not found")),
+                professionalRepository.findById(professionalId).orElseThrow(()-> new ResourceNotFoundException("Professional not found")),
                 vehicleRepository.findById(dto.vehicleId()).orElseThrow(()->new ResourceNotFoundException("Vehicle not found"))
         );
         repository.save(serviceOrder);
         return mapper.toResponse(serviceOrder);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public ServiceOrderResponseDTO findById(Long id){
         return mapper.toResponse(repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found")));
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     public void update(Long id, ServiceOrderUpdateDTO dto){
         ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
         ServiceOrderStatus status = serviceOrder.getStatus();
+
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
 
         validateModifyStatus(dto.status(), status);
 
@@ -107,14 +127,17 @@ public class ServiceOrderService {
         }
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
         repository.delete(serviceOrder);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void addPart(Long id, ServiceOrderPartReserveDTO dto){
         ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         Part part = partRepository.findById(dto.partId()).orElseThrow(()->new ResourceNotFoundException("Part not found"));
         if(serviceOrderPartRepository.existsByServiceOrderAndPart(serviceOrder, part)){
             throw new DuplicateFieldException("Part already added to the service order.");
@@ -129,8 +152,11 @@ public class ServiceOrderService {
         stockService.reserve(dto.quantityReserved(), dto.partId(), serviceOrderPart);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void reserveMoreParts(Long id, ServiceOrderPartReserveMoreDTO dto){
+        ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
         if (!serviceOrderPart.getServiceOrder().getId().equals(id)) {
@@ -143,8 +169,11 @@ public class ServiceOrderService {
         stockService.reserve(dto.quantityReserved(), serviceOrderPart.getPart().getId(), serviceOrderPart);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void consumePart(Long id, ServiceOrderPartConsumeDTO dto){
+        ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
         if (!serviceOrderPart.getServiceOrder().getId().equals(id)) {
@@ -161,8 +190,11 @@ public class ServiceOrderService {
         stockService.consume(dto.quantityConsume(), serviceOrderPart.getPart().getId(), serviceOrderPart);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void releaseToStock(Long id, ServiceOrderPartReleaseDTO dto){
+        ServiceOrder serviceOrder = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         ServiceOrderPart serviceOrderPart = serviceOrderPartRepository.findById(dto.ServiceOrderPartId())
                 .orElseThrow(()->new ResourceNotFoundException("Part related to the service order not found"));
         if (!serviceOrderPart.getServiceOrder().getId().equals(id)) {
@@ -199,9 +231,11 @@ public class ServiceOrderService {
 
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     public void addServiceItem(Long id, ServiceOrderServiceItemAddDTO dto){
         ServiceOrder serviceOrder = repository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         ServiceItem serviceItem = serviceItemRepository.findById(dto.serviceItemId())
                 .orElseThrow(()-> new ResourceNotFoundException("Service item not found"));
         if(serviceOrderServiceItemRepository.existsByServiceOrderAndServiceItem(serviceOrder,serviceItem)){
@@ -214,9 +248,11 @@ public class ServiceOrderService {
         serviceOrderServiceItemRepository.save(serviceOrderServiceItem);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     public void removeServiceItem(Long id, ServiceOrderServiceItemRemoveDTO dto){
         ServiceOrder serviceOrder = repository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Service order not found"));
+        verifyAccessServiceOrder(serviceOrder.getProfessional().getId());
         ServiceItem serviceItem = serviceItemRepository.findById(dto.serviceItemId())
                 .orElseThrow(()-> new ResourceNotFoundException("Service item not found"));
         ServiceOrderServiceItem serviceOrderServiceItem = serviceOrderServiceItemRepository
@@ -249,6 +285,23 @@ public class ServiceOrderService {
             if (quantityToRelease > 0) {
                 throw new ReservationNotYetReturned("It is not permitted to cancel or complete an order with unused part reservations.");
             }
+        }
+    }
+
+    private static void verifyAccessServiceOrder(Long professionalIdServiceOrder){
+        Authentication authentication =
+                SecurityContextHolder.getContext()
+                        .getAuthentication();
+
+        assert authentication != null;
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        assert userDetails != null;
+        Long professionalId = userDetails.getProfessionalId();
+
+        if(!professionalId.equals(professionalIdServiceOrder)){
+            throw new AccessDeniedException("Access denied");
         }
     }
 }

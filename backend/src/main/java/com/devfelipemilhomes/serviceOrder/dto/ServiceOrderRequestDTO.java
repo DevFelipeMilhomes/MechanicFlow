@@ -10,8 +10,6 @@ public record ServiceOrderRequestDTO(
         Long vehicleId,
         @NotNull(message = "Required field")
         Long clientId,
-        @NotNull(message = "Required field")
-        Long professionalId,
         @NotBlank(message = "Required field")
         String reportedProblem,
         String diagnosis,

@@ -5,6 +5,7 @@ import com.devfelipemilhomes.client.dto.ClientResponseDTO;
 import com.devfelipemilhomes.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ClientService {
         this.mapper = mapper;
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public ClientResponseDTO create(ClientRequestDTO dto){
         Client client = mapper.toEntity(dto);
         validator.validate(client);
@@ -30,6 +32,7 @@ public class ClientService {
         return mapper.toResponse(client);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public ClientResponseDTO findById(Long id){
         Client client = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("client not found"));
@@ -37,11 +40,13 @@ public class ClientService {
         return mapper.toResponse(client);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         Client client = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("client not found"));
         repository.delete(client);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public List<ClientResponseDTO> searchByExample(String name, String cpf, String phone, String email){
         Client client = new Client();
         client.setName(name);
@@ -79,6 +84,7 @@ public class ClientService {
 
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id,ClientRequestDTO dto){
         Client client = repository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException("client not found")

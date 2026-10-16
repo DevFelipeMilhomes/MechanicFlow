@@ -2,6 +2,7 @@ package com.devfelipemilhomes.security;
 
 import com.devfelipemilhomes.appUser.AppUser;
 import com.devfelipemilhomes.appUser.UserRepository;
+import com.devfelipemilhomes.professional.Professional;
 import com.devfelipemilhomes.role.Role;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +28,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         AppUser user = userRepository.findByUsername(normalizeUsername(username))
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
-        List<String> roles = user.getProfessional()
+        Professional professional = user.getProfessional();
+
+        List<String> roles = professional
                 .getRoles()
                 .stream()
                 .map(Role::getName)
@@ -35,13 +38,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .distinct()
                 .toList();
 
-        return User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles(roles.toArray(String[]::new))
-                .disabled(!user.isEnabled())
-                .build();
-
+        return new CustomUserDetails(
+                professional.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                roles
+        );
     }
 
     public String normalizeUsername(String username){

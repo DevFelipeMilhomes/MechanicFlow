@@ -5,6 +5,7 @@ import com.devfelipemilhomes.part.dto.PartRequestDTO;
 import com.devfelipemilhomes.part.dto.PartResponseDTO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ public class PartSevice {
         this.mapper = mapper;
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public PartResponseDTO create(PartRequestDTO dto){
         Part part = mapper.toEntity(dto);
         validation.validate(part);
@@ -30,11 +32,13 @@ public class PartSevice {
         return mapper.toResponse(part);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public PartResponseDTO findById(Long id){
         Part part = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
         return mapper.toResponse(part);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id, PartRequestDTO dto){
         Part part = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
         mapper.toUpdate(dto, part);
@@ -42,11 +46,13 @@ public class PartSevice {
         repository.save(part);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         Part part = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
         repository.delete(part);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public List<PartResponseDTO> searchByExample(String name, String description, BigDecimal unitPrice){
         Part part = new Part();
         part.setName(name);

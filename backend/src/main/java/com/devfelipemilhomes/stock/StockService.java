@@ -7,6 +7,7 @@ import com.devfelipemilhomes.serviceOrder.serviceOrderPart.ServiceOrderPart;
 import com.devfelipemilhomes.stock.dto.StockRequestDTO;
 import com.devfelipemilhomes.stock.dto.StockResponseDTO;
 import com.devfelipemilhomes.stock.stockMoviment.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class StockService {
         this.stockMovimentMapper = stockMovimentMapper;
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public StockResponseDTO create(StockRequestDTO dto){
         Part part = partRepository.findById(dto.partId()).orElseThrow(()-> new ResourceNotFoundException("Part not found"));
         Stock stock = mapper.toEntity(dto);
@@ -56,11 +58,13 @@ public class StockService {
         return mapper.toResponse(stock);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public StockResponseDTO findById(Long id){
         Stock stock = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Stock not found"));
         return mapper.toResponse(stock);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void update(Long id, StockRequestDTO dto){
         Stock stock = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Stock not found"));
         Part part = partRepository.findById(dto.partId()).orElseThrow(()->new ResourceNotFoundException("part not found"));
@@ -77,11 +81,13 @@ public class StockService {
         repository.save(stock);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public void delete(Long id){
         Stock stock = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("Stock not found"));
         repository.delete(stock);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void reserve(Integer quantityReserve, Long partId, ServiceOrderPart serviceOrderPart){
         Part part = partRepository.findById(partId).orElseThrow(()->new ResourceNotFoundException("Part not found"));
@@ -93,6 +99,7 @@ public class StockService {
         stockMovimentRepository.save(stockMoviment);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void consume(Integer quantityConsume, Long partId, ServiceOrderPart serviceOrderPart){
         Part part = partRepository.findById(partId).orElseThrow(()->new ResourceNotFoundException("Part not found"));
@@ -104,6 +111,7 @@ public class StockService {
         stockMovimentRepository.save(stockMoviment);
     }
 
+    @PreAuthorize("hasRole('MECANICO')")
     @Transactional
     public void release(Integer quantityRelease, Long partId, ServiceOrderPart serviceOrderPart){
         Part part = partRepository.findById(partId).orElseThrow(()->new ResourceNotFoundException("Part not found"));
@@ -114,10 +122,12 @@ public class StockService {
         stockMovimentRepository.save(stockMoviment);
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO', 'RECEPCIONISTA')")
     public List<StockResponseDTO> findAll(){
         return repository.findAll().stream().map(mapper::toResponse).toList();
     }
 
+    @PreAuthorize("hasAnyRole('GERENTE', 'MECANICO')")
     public List<StockMovimentResponseDTO> findAllStockMoviment(){
         return stockMovimentRepository.findAll().stream().map(stockMovimentMapper::toResponse).toList();
     }

@@ -23,6 +23,10 @@ public record ErrorResponseDTO(int status, String message, OffsetDateTime date, 
         return new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), message, OffsetDateTime.now(), List.of());
     }
 
+    public static ErrorResponseDTO responseForbidden(String message){
+        return new ErrorResponseDTO(HttpStatus.FORBIDDEN.value(), message, OffsetDateTime.now(), List.of());
+    }
+
     public static ErrorResponseDTO responseMethodNotAllowed(String message, String path){
         ErrorsField errorsField = new ErrorsField("path",path);
         List<ErrorsField> errors = new ArrayList<>();
