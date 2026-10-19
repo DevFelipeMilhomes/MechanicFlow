@@ -1,11 +1,8 @@
 package com.devfelipemilhomes.client;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
-import java.util.Objects;
+
 
 @Entity
 @Table(name="client")

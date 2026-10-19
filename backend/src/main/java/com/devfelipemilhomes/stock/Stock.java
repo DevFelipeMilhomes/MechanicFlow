@@ -2,10 +2,8 @@ package com.devfelipemilhomes.stock;
 
 import com.devfelipemilhomes.part.Part;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "stock")

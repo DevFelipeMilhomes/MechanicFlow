@@ -2,11 +2,8 @@ package com.devfelipemilhomes.vehicle;
 
 import com.devfelipemilhomes.serviceOrder.ServiceOrder;
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
-import lombok.Data;
 
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "vehicle")

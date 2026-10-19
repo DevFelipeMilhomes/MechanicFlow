@@ -1,18 +1,13 @@
 package com.devfelipemilhomes.serviceOrder;
 
 import com.devfelipemilhomes.client.Client;
-import com.devfelipemilhomes.part.Part;
 import com.devfelipemilhomes.professional.Professional;
-import com.devfelipemilhomes.serviceItem.ServiceItem;
 import com.devfelipemilhomes.serviceOrder.serviceOrderPart.ServiceOrderPart;
 import com.devfelipemilhomes.serviceOrder.serviceOrderServiceItem.ServiceOrderServiceItem;
 import com.devfelipemilhomes.vehicle.Vehicle;
 import jakarta.persistence.*;
-import lombok.Data;
-
 import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
