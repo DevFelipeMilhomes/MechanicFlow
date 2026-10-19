@@ -8,6 +8,7 @@ public record UserResponseDTO(
         String username,
         boolean enabled,
         Long professionalId,
+        String email,
         List<String> roles,
         OffsetDateTime created
 ) {

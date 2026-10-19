@@ -1,6 +1,7 @@
 package com.devfelipemilhomes.appUser.dto;
 
 import com.devfelipemilhomes.professional.Professional;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,6 +14,10 @@ public record UserRequestDTO(
         @Size(min = 8, max = 64, message = "The field is outside the 8 to 64 character range.")
         String password,
         @NotNull(message = "Required field")
-        Long ProfessionalId
+        Long ProfessionalId,
+        @NotBlank(message = "Required field")
+        @Email(message = "Invalid email")
+        @Size(min = 1, max = 254, message = "The field is outside the 1 to 254 character range.")
+        String email
 ) {
 }

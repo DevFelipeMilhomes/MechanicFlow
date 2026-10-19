@@ -33,6 +33,12 @@ public class AppUser {
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
+    @Column(name = "email", nullable = false, length = 254)
+    private String email;
+
+    @Column(name = "google_sub", length = 255)
+    private String googleSub;
+
     public Long getId() {
         return id;
     }
@@ -75,6 +81,22 @@ public class AppUser {
 
     public Professional getProfessional() {
         return professional;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGoogleSub() {
+        return googleSub;
+    }
+
+    public void setGoogleSub(String googleSub) {
+        this.googleSub = googleSub;
     }
 
     public void setProfessional(Professional professional) {

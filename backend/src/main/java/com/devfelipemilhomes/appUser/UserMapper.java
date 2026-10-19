@@ -16,6 +16,7 @@ public class UserMapper {
         user.setUsername(dto.username()
                 .trim()
                 .toLowerCase(Locale.ROOT));
+        user.setEmail(dto.email());
         user.setPassword(password);
         user.setProfessional(professional);
         return user;
@@ -33,6 +34,7 @@ public class UserMapper {
                 user.getUsername(),
                 user.isEnabled(),
                 user.getProfessional().getId(),
+                user.getEmail(),
                 roles,
                 user.getCreatedAt()
         );
