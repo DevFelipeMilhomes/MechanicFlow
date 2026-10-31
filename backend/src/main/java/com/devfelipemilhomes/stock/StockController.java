@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("stocks")
+@RequestMapping("api/stocks")
 public class StockController {
     private final StockService service;
 

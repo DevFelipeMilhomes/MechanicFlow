@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("service-orders")
+@RequestMapping("api/service-orders")
 public class ServiceOrderController {
     private final ServiceOrderService service;
 
