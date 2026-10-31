@@ -8,9 +8,13 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,10 +54,39 @@ public class CustomOidcUserService
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toUnmodifiableSet());
 
+        Map<String, Object> userInfoClaims = new HashMap<>();
+
+        if (googleUser.getUserInfo() != null) {
+            userInfoClaims.putAll(
+                    googleUser.getUserInfo().getClaims()
+            );
+        }
+
+        userInfoClaims.put("sub", googleUser.getSubject());
+
+        userInfoClaims.put(
+                "app_user_id",
+                String.valueOf(appUser.userId())
+        );
+
+        userInfoClaims.put(
+                "professional_id",
+                appUser.professionalId()
+        );
+
+        userInfoClaims.put(
+                "roles",
+                appUser.roles()
+        );
+
+        OidcUserInfo enrichedUserInfo =
+                new OidcUserInfo(userInfoClaims);
+
+
         return new CustomOidcUser(
                 authorities,
                 googleUser.getIdToken(),
-                googleUser.getUserInfo(),
+                enrichedUserInfo,
                 appUser.userId(),
                 appUser.professionalId(),
                 appUser.roles()
