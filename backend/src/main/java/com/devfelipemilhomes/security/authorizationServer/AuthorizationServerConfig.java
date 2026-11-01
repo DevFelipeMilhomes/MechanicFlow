@@ -1,5 +1,6 @@
 package com.devfelipemilhomes.security.authorizationServer;
 
+import com.devfelipemilhomes.security.CustomOidcUser;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -29,10 +29,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 public class AuthorizationServerConfig {
@@ -85,16 +82,16 @@ public class AuthorizationServerConfig {
 
             Object principal = context.getPrincipal().getPrincipal();
 
-            if (principal instanceof OidcUser user) {
+            if (principal instanceof CustomOidcUser user) {
 
                 String appUserId =
-                        user.getClaimAsString("app_user_id");
+                        Objects.toString(user.getAppUserId());
 
                 Object professionalId =
-                        user.getClaim("professional_id");
+                        user.getProfessionalId();
 
                 List<String> roles =
-                        user.getClaimAsStringList("roles");
+                        user.getRoleNames();
 
                 context.getClaims()
                         .subject(appUserId)

@@ -54,39 +54,9 @@ public class CustomOidcUserService
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toUnmodifiableSet());
 
-        Map<String, Object> userInfoClaims = new HashMap<>();
-
-        if (googleUser.getUserInfo() != null) {
-            userInfoClaims.putAll(
-                    googleUser.getUserInfo().getClaims()
-            );
-        }
-
-        userInfoClaims.put("sub", googleUser.getSubject());
-
-        userInfoClaims.put(
-                "app_user_id",
-                String.valueOf(appUser.userId())
-        );
-
-        userInfoClaims.put(
-                "professional_id",
-                appUser.professionalId()
-        );
-
-        userInfoClaims.put(
-                "roles",
-                appUser.roles()
-        );
-
-        OidcUserInfo enrichedUserInfo =
-                new OidcUserInfo(userInfoClaims);
-
-
         return new CustomOidcUser(
                 authorities,
                 googleUser.getIdToken(),
-                enrichedUserInfo,
                 appUser.userId(),
                 appUser.professionalId(),
                 appUser.roles()
