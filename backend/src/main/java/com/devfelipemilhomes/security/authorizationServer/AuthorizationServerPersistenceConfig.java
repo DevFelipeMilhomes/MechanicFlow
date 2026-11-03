@@ -1,6 +1,7 @@
 package com.devfelipemilhomes.security.authorizationServer;
 
 import com.devfelipemilhomes.security.CustomOidcUser;
+import com.devfelipemilhomes.security.CustomUserDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,12 +56,8 @@ public class AuthorizationServerPersistenceConfig {
 
         BasicPolymorphicTypeValidator.Builder validator =
                 BasicPolymorphicTypeValidator.builder()
-
-                        // Autoriza seu principal customizado.
+                        .allowIfSubType(CustomUserDetails.class)
                         .allowIfSubType(CustomOidcUser.class)
-
-                        // Autoriza as implementações imutáveis
-                        // de coleções do próprio JDK.
                         .allowIfSubType("java.util.ImmutableCollections$");
 
         return JsonMapper.builder()

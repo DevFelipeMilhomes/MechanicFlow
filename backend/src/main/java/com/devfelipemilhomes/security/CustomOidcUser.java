@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import java.util.Collection;
 import java.util.List;
 
-public final class CustomOidcUser extends DefaultOidcUser {
+public final class CustomOidcUser extends DefaultOidcUser implements MechanicFlowPrincipal{
 
     private final Long appUserId;
     private final Long professionalId;

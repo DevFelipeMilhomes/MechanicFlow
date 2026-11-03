@@ -4,7 +4,6 @@ import com.devfelipemilhomes.appUser.AppUser;
 import com.devfelipemilhomes.appUser.UserRepository;
 import com.devfelipemilhomes.professional.Professional;
 import com.devfelipemilhomes.role.Role;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Professional professional = user.getProfessional();
 
-        List<String> roles = professional
+        List<String> roleNames = professional
                 .getRoles()
                 .stream()
                 .map(Role::getName)
@@ -40,9 +39,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new CustomUserDetails(
                 professional.getId(),
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                roles
+                roleNames
         );
     }
 

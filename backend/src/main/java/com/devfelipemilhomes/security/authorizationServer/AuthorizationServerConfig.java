@@ -1,6 +1,7 @@
 package com.devfelipemilhomes.security.authorizationServer;
 
 import com.devfelipemilhomes.security.CustomOidcUser;
+import com.devfelipemilhomes.security.MechanicFlowPrincipal;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -82,7 +83,7 @@ public class AuthorizationServerConfig {
 
             Object principal = context.getPrincipal().getPrincipal();
 
-            if (principal instanceof CustomOidcUser user) {
+            if (principal instanceof MechanicFlowPrincipal user) {
 
                 String appUserId =
                         Objects.toString(user.getAppUserId());
@@ -98,6 +99,10 @@ public class AuthorizationServerConfig {
                         .claim("app_user_id", appUserId)
                         .claim("professional_id", professionalId)
                         .claim("roles", roles);
+            } else {
+                throw new IllegalStateException(
+                        "Principal incompatible with MechanicFlowPrincipal"
+                );
             }
         };
     }
