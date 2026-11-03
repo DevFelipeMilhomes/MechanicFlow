@@ -1,11 +1,8 @@
 package com.devfelipemilhomes.part;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name="part")

@@ -1,17 +1,22 @@
 spring:
+
   application:
     name: demo
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: validate
+
   flyway:
     baseline-on-migrate: true
     baseline-version: 1
+
   security:
     oauth2:
       client:
@@ -23,3 +28,14 @@ spring:
               - openid
               - profile
               - email
+
+app:
+  oauth2:
+    postman-client-secret: ${MECHANICFLOW_POSTMAN_CLIENT_SECRET}
+
+  security:
+    issuer: ${MECHANICFLOW_ISSUER:http://localhost:8080}
+    jwk:
+      keystore-location: ${MECHANICFLOW_JWK_KEYSTORE}
+      keystore-password: ${MECHANICFLOW_JWK_KEYSTORE_PASSWORD}
+      key-alias: mechanicflow-signing

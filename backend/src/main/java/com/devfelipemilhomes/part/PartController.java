@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("parts")
+@RequestMapping("api/parts")
 public class PartController {
     private final PartSevice sevice;
 

@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import java.util.Collection;
 import java.util.List;
 
-public final class CustomOidcUser extends DefaultOidcUser {
+public final class CustomOidcUser extends DefaultOidcUser implements MechanicFlowPrincipal{
 
     private final Long appUserId;
     private final Long professionalId;
@@ -17,12 +17,11 @@ public final class CustomOidcUser extends DefaultOidcUser {
     public CustomOidcUser(
             Collection<? extends GrantedAuthority> authorities,
             OidcIdToken idToken,
-            OidcUserInfo userInfo,
             Long appUserId,
             Long professionalId,
             List<String> roleNames) {
 
-        super(authorities, idToken, userInfo, "sub");
+        super(authorities, idToken, "sub");
 
         this.appUserId = appUserId;
         this.professionalId = professionalId;

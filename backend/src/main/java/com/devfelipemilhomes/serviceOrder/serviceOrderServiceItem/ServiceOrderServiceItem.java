@@ -3,10 +3,8 @@ package com.devfelipemilhomes.serviceOrder.serviceOrderServiceItem;
 import com.devfelipemilhomes.serviceItem.ServiceItem;
 import com.devfelipemilhomes.serviceOrder.ServiceOrder;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 @Table(name = "service_order_service_item")

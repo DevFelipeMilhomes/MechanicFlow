@@ -1,12 +1,6 @@
 package com.devfelipemilhomes.role;
 
-import com.devfelipemilhomes.professional.Professional;
 import jakarta.persistence.*;
-import lombok.Data;
-
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "role")
