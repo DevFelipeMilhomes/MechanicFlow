@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -78,6 +79,19 @@ public class AuthorizationServerConfig {
 
             if (!OAuth2TokenType.ACCESS_TOKEN.equals(
                     context.getTokenType())) {
+                return;
+            }
+
+            AuthorizationGrantType grantType =
+                    context.getAuthorizationGrantType();
+
+            boolean authorizationCodeGrant =
+                    AuthorizationGrantType.AUTHORIZATION_CODE.equals(grantType);
+
+            boolean refreshTokenGrant =
+                    AuthorizationGrantType.REFRESH_TOKEN.equals(grantType);
+
+            if (!authorizationCodeGrant && !refreshTokenGrant) {
                 return;
             }
 
