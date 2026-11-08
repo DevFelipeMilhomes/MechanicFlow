@@ -63,4 +63,35 @@ public class OAuth2ClientSeedConfig {
             repository.save(client);
         };
     }
+
+    @Bean
+    ApplicationRunner registerSwaggerClient( RegisteredClientRepository repository ){
+        return args -> {
+            String clientId = "mechanicflow-swagger-ui";
+            if (repository.findByClientId(clientId) != null) {
+                return;
+            }
+
+            RegisteredClient swaggerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                    .clientId(clientId)
+                    .clientName("MechanicFlow Swagger UI")
+                    .clientAuthenticationMethod(
+                            ClientAuthenticationMethod.NONE
+                    )
+                    .authorizationGrantType(
+                            AuthorizationGrantType.AUTHORIZATION_CODE
+                    )
+                    .redirectUri(
+                            "http://localhost:8080/swagger-ui/oauth2-redirect.html"
+                    )
+                    .scope("mechanicflow.api")
+                    .clientSettings(
+                            ClientSettings.builder()
+                                    .requireProofKey(true)
+                                    .build()
+                    )
+                    .build();
+            repository.save(swaggerClient);
+        };
+    }
 }

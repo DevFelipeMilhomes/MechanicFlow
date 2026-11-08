@@ -31,11 +31,26 @@ spring:
 
 app:
   oauth2:
-    postman-client-secret: ${MECHANICFLOW_POSTMAN_CLIENT_SECRET}
+    postman-client-secret: ${POSTMAN_CLIENT_SECRET}
+  openapi:
+    authorization-url: ${OPENAPI_AUTHORIZATION_URL}
+    token-url: ${OPENAPI_TOKEN_URL}
 
   security:
     issuer: ${MECHANICFLOW_ISSUER:http://localhost:8080}
     jwk:
-      keystore-location: ${MECHANICFLOW_JWK_KEYSTORE}
-      keystore-password: ${MECHANICFLOW_JWK_KEYSTORE_PASSWORD}
+      keystore-location: ${JWK_KEYSTORE}
+      keystore-password: ${JWK_KEYSTORE_PASSWORD}
       key-alias: mechanicflow-signing
+
+springdoc:
+  paths-to-match: /api/**
+  swagger-ui:
+    path: /swagger-ui.html
+    oauth2-redirect-url: http://localhost:8080/swagger-ui/oauth2-redirect.html
+    oauth:
+      client-id: mechanicflow-swagger-ui
+      scopes:
+        - mechanicflow.api
+      use-pkce-with-authorization-code-grant: true
+    disable-swagger-default-url: true

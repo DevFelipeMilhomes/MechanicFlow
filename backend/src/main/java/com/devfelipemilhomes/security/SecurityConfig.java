@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -111,7 +112,11 @@ public class SecurityConfig {
 
     @Bean
     @Order(3)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOidcUserService customOidcUserService) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            CustomOidcUserService customOidcUserService
+    ) throws Exception {
+
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
@@ -120,12 +125,23 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .oidcUserService(customOidcUserService)
                         )
-                        .defaultSuccessUrl("/auth/me", true))
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .requestMatchers(HttpMethod.POST, "/users/**", "/error", "/favicon.ico").permitAll()
-                                .anyRequest()
-                                .authenticated()
+                        .defaultSuccessUrl("/auth/me", true)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/users/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/error",
+                                "/favicon.ico",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .build();
     }
