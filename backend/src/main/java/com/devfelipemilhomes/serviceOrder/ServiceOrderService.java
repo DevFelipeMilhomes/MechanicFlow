@@ -9,7 +9,7 @@ import com.devfelipemilhomes.professional.ProfessionalRepository;
 import com.devfelipemilhomes.security.CustomUserDetails;
 import com.devfelipemilhomes.serviceItem.ServiceItem;
 import com.devfelipemilhomes.serviceItem.ServiceItemRepository;
-import com.devfelipemilhomes.serviceOrder.dto.ReservationNotYetReturned;
+import com.devfelipemilhomes.serviceOrder.exception.ReservationNotYetReturned;
 import com.devfelipemilhomes.serviceOrder.dto.ServiceOrderRequestDTO;
 import com.devfelipemilhomes.serviceOrder.dto.ServiceOrderResponseDTO;
 import com.devfelipemilhomes.serviceOrder.dto.ServiceOrderUpdateDTO;

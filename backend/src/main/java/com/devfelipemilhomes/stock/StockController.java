@@ -59,6 +59,10 @@ public class StockController {
                     description = "Acesso não autorizado"
             ),
             @ApiResponse(
+                    responseCode = "404",
+                    description = "Estoque ou peça não encontrado"
+            ),
+            @ApiResponse(
                     responseCode = "409",
                     description = "Estoque já cadastrado"
             )
@@ -123,7 +127,7 @@ public class StockController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Estoque não encontrado"
+                    description = "Estoque ou peça não encontrado"
             ),
             @ApiResponse(
                     responseCode = "401",

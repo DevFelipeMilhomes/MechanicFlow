@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
+@Schema(name = "Profissional retornado")
 public record ProfessionalResponseDTO(
         @Schema(name = "id", example = "3")
         Long id,

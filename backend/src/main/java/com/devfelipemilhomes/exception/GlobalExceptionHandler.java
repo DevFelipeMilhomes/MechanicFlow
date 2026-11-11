@@ -1,7 +1,7 @@
 package com.devfelipemilhomes.exception;
 
 import com.devfelipemilhomes.appUser.exception.UsernameAlreadyExistsException;
-import com.devfelipemilhomes.serviceOrder.dto.ReservationNotYetReturned;
+import com.devfelipemilhomes.serviceOrder.exception.ReservationNotYetReturned;
 import com.devfelipemilhomes.serviceOrder.exception.StatusReturnNotAllowed;
 import com.devfelipemilhomes.stock.exception.ConsumptionExceedingReserves;
 import com.devfelipemilhomes.stock.exception.QuantityReleaseExceedingUnconsumed;
