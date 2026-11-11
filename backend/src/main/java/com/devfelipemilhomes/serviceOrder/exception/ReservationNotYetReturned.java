@@ -1,4 +1,4 @@
-package com.devfelipemilhomes.serviceOrder.dto;
+package com.devfelipemilhomes.serviceOrder.exception;
 
 public class ReservationNotYetReturned extends RuntimeException {
     public ReservationNotYetReturned(String message) {

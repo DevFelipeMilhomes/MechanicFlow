@@ -6,6 +6,7 @@ import com.devfelipemilhomes.exception.ResourceNotFoundException;
 import com.devfelipemilhomes.appUser.dto.UserRequestDTO;
 import com.devfelipemilhomes.professional.Professional;
 import com.devfelipemilhomes.professional.ProfessionalRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class UserService {
         this.mapper = mapper;
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     @Transactional
     public UserResponseDTO create(UserRequestDTO dto){
         Professional professional = professionalRepository.findById(dto.ProfessionalId()).orElseThrow(
@@ -50,18 +52,21 @@ public class UserService {
         return mapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public UserResponseDTO findByUsername(String username){
         AppUser user = repository.findByUsername(normalizeUsername(username))
                 .orElseThrow(()->new UsernameNotFoundException("User not found"));
         return mapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public UserResponseDTO findById(Long id){
         AppUser user = repository.findById(id)
                 .orElseThrow(()->new UsernameNotFoundException("User not found"));
         return mapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('GERENTE')")
     public String normalizeUsername(String username){
         return username
                 .trim()
