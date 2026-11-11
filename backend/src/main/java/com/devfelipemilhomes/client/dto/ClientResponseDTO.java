@@ -16,7 +16,7 @@ public record ClientResponseDTO(
         String phone,
         @Schema(name = "email", example = "usuario@gmail.com")
         String email,
-        @Schema(name = "Criado em", example = "2026-09-21T21:42:24.178972Z")
+        @Schema(name = "criado_em", example = "2026-09-21T21:42:24.178972Z")
         OffsetDateTime createdAt
 ) {
 }

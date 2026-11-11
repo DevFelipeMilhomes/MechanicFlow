@@ -129,10 +129,6 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                HttpMethod.POST,
-                                "/users/**"
-                        ).permitAll()
-                        .requestMatchers(
                                 "/error",
                                 "/favicon.ico",
                                 "/swagger-ui.html",
